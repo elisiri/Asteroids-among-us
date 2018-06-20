@@ -2,36 +2,56 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-}
-
-.mapContainer {
-  margin-top: 100px;
-
+  overflow: hidden;
 }
 
 #map-holder {
-  margin-top: 100px;
   height: 100vh;
-  width: 100vw;
+      width: 100vw;
 }
 
-svg rect {
-  fill: #2A2C39;   /* map background colour */
+.svgContainer {
+  height: 100vh;
+  width: 100vw;
+
 }
-.country{
-  fill: #d0d0d0;   /* country colour */
-  stroke: #2A2C39; /* country border colour */
-  stroke-width: 1; /* country border width */
+
+.meteors {
+  fill: black;
+  stroke-width: 0;
+  stroke: rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
+  transform-origin: center center;
 }
-.country-on{
-  fill: #4B5358;   /* highlight colour for selected country */
+.meteors-aura {
+  fill: black;
+  stroke-width: 0;
+  opacity: 0.3;
+  transition: 0.3s;
+  transform: scale(0);
+  transform-origin: center center;
 }
-.countryLabel{
-  display: none;   /* hide all country labels by default */
+.meteors:hover {
+  stroke-width: 30px;
+  /* transform: scale(1.2); */
 }
-.countryName{
-  fill: #FFFAFF;   /* country label text colour */
+.meteors:hover + .line {
+
 }
-.countryLabelBg{
-  fill: #30BCED;   /* country label background colour */
+
+.line {
+  transition: 0.3s;
+}
+
+.countries {
+  stroke-width: 0.2;
+  stroke: black;
+  fill: white;
+}
+
+.title {
+  position: absolute;
+  margin: 78vh 38vw;
+  letter-spacing: 0.25em;
+  font-size: 21px;
 }
