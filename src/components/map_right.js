@@ -24,14 +24,10 @@ class MapRight extends Component {
     })})
   }
 
-  expandLine(coord, e, item, i) {
+  bringUp(item) {
 
-    var lineY2 = this.projection(coord)[1]
-    // console.log(e.target.nextSibling.getAttribute('y2'))
-    // var y2 = e.target.nextSibling.getAttribute('y2')
-    // e.target.nextSibling.setAttribute('y2', y2 + 90)
+    if (item) this.setState({upperSvg: item.id})
 
-    return lineY2 + 80
   }
 
   render() {
@@ -49,9 +45,9 @@ class MapRight extends Component {
 
             return(
 
-                                                              <svg className="singleSvg">
+                                                              <svg className="singleSvg" >
                                                                 <circle key={'patho' + i}
-                                                                onMouseEnter={e => {this.expandLine(item.geolocation.coordinates, e, item, i)}}
+                                                                onMouseEnter={e => {this.bringUp(item)}}
 
                                                                 cx={this.projection(item.geolocation.coordinates)[0]}
                                                                 cy={this.projection(item.geolocation.coordinates)[1]}
@@ -65,7 +61,7 @@ class MapRight extends Component {
                                                               <rect key={'pa' + i} className="label"
                                                                 x={this.projection(item.geolocation.coordinates)[0] + 8}
                                                                 y={this.projection(item.geolocation.coordinates)[1] + 50}/>
-                                                              <text key={'pat' + i} className="label-text"
+                                                              <text key={'pat' + i} className="label-text" id={item.id}
                                                                 x={this.projection(item.geolocation.coordinates)[0] + 18}
                                                                 y={this.projection(item.geolocation.coordinates)[1] + 69}>
                                                                 {item.name} </text>
@@ -89,6 +85,7 @@ class MapRight extends Component {
               preserveAspectRatio="xMinYMin">
           {countries}
           {meteorites}
+          <use id="use" xlinkHref={'#' + this.state.upperSvg} />
         </svg>
       </div>
     )
