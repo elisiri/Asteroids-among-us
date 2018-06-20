@@ -33,14 +33,53 @@ body {
 }
 .meteors:hover {
   stroke-width: 30px;
+  /* fill: white; */
   /* transform: scale(1.2); */
 }
 .meteors:hover + .line {
-
+  stroke-dashoffset: 0;
 }
 
+/* .singleSvg {
+  position: absolute;
+  z-index: 1;
+}
+.singleSvg:hover {
+  z-index: 99999;
+} */
+
 .line {
+  transition: 0.25s;
+  stroke-dasharray: 90;
+  stroke-dashoffset: 90;
+}
+
+.label {
+  width: 0;
+  height: 30px;
+  fill: black;
+  position: absolute;
+  z-index: 999998;
   transition: 0.3s;
+  transition-delay: 0.15s;
+}
+.meteors:hover ~ .label {
+  width: 145px;
+}
+.label-text {
+  fill: white;
+  font-size: 9px;
+  position: absolute;
+  z-index: 999999;
+  opacity: 0;
+  transition: 0.3s;
+  display: none;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.meteors:hover ~ .label-text {
+  opacity: 1;
+  display: block;
 }
 
 .countries {
@@ -51,7 +90,8 @@ body {
 
 .title {
   position: absolute;
-  margin: 78vh 38vw;
-  letter-spacing: 0.25em;
+  margin: 45vw 38vw;
+  letter-spacing: 0.3em;
   font-size: 21px;
+  text-align: center;
 }
