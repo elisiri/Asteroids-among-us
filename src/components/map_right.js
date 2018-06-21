@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import $ from 'jquery'
-import {geoMercator, geoPath, max, min, scaleLinear, ticks, event, zoom, select} from 'd3'
+import {geoMercator, geoPath, max, min, scaleLinear, ticks, event, zoom, select, selectAll, translate} from 'd3'
 import worlddata from './mappa.js'
 import meteordata from '../meteoriti.js'
 import _ from 'lodash'
@@ -13,12 +13,40 @@ class MapRight extends Component {
     this.clientHeight = window.document.documentElement.clientHeight
     this.clientWidth = window.document.documentElement.clientWidth
     this.zoom = zoom().scaleExtent([1, 4]).on("zoom", this.zoomed)
-    this.zoom2 = zoom().scaleExtent([1, - 4]).on("zoom", this.deZoomed)
+    this.state = {
+     myel: [{html:''}]
+    }
+    // this.zoom2 = zoom().scaleExtent([-4, 1]).on("zoom", this.deZoomed)
   }
+
+  zoomed = () => {
+    this.g.setAttribute("transform", event.transform)
+    // select('#use').attr("transform", event.transform)
+    this.setState({zoomCoeffk: event.transform.k,
+                  zoomCoeffx: event.transform.x,
+                  zoomCoeffy: event.transform.y})
+    console.log(this.state.zoomCoeffx, this.state.zoomCoeffy)
+
+  }
+  // deZoomed = () => {
+  //
+  //   _.forEach(selectAll('.singleSvg'), (array2, index) => {
+  //     _.forEach(array2, (array3, i) => {
+  //       _.forEach(array3, (item, ind)=> {
+  //         var cy = select(item).attr('ypoint')
+  //         var cx = select(item).attr('xpoint')
+  //         select(item).attr("transform", ' translate('+ -cx +', ' + -cy + ') ' + event.transform + ' translate('+cx+', ' + cy + ') ')
+  //       })
+  //
+  //     })
+  //
+  //   })
+  //
+  // }
 
   componentDidMount() {
     select(this.svgContainer).call(this.zoom)
-    // select(this.svg).call(zoom().scaleExtent([1, 4]).on("zoom", this.deZoomed))
+    // select(this.svgBigContainer).call(this.zoom2)
 
   }
 
@@ -30,20 +58,17 @@ class MapRight extends Component {
     })})
   }
 
-  bringUp(item) {
+  bringUp = (item, e) => {
     if (item) this.setState({upperSvg: item.id})
-  }
-
-  zoomed = () => {
-    this.g.setAttribute("transform", event.transform)
-    this.setState({zoomCoeff: event.transform})
-  }
-  deZoomed = () => {
-    console.log('ciao')
-    select('.singleSvg').attr("transform", event.transform)
+    console.log(e.target.parentNode);
+    this.setState({
+     myel: [{html:e.target.parentNode}]
+   })
   }
 
   render() {
+
+    if(this.state.zoomCoeffk !== 1) this.state.upperSvg = ''
 
     const countries = worlddata.features.map((item, i) => <path key={'path' + i} d={this.pathGenerator(item)} className='countries'/>)
 
@@ -60,29 +85,31 @@ class MapRight extends Component {
             if (item.year) item.anno = item.year.toString().substring(0, 4)
             return(
 
-                                                              <g className="singleSvg">
-                                                                <circle key={'patho' + i}
-                                                                onMouseEnter={e => {this.bringUp(item)}}
-                                                                fill={convertColors(parseInt(item.anno))}
-                                                                cx={this.projection(item.geolocation.coordinates)[0]}
-                                                                cy={this.projection(item.geolocation.coordinates)[1]}
-                                                                r={convertMasses(parseFloat(item.mass))} className='meteors'/>
-                                                              <line key={'pathos' + i}
-                                                                x1={this.projection(item.geolocation.coordinates)[0]}
-                                                                y1={this.projection(item.geolocation.coordinates)[1]}
-                                                                x2={this.projection(item.geolocation.coordinates)[0]}
-                                                                y2={this.projection(item.geolocation.coordinates)[1] + 80}
-                                                                stroke="black" strokeWidth="0.6" className="line"/>
-                                                              <rect key={'pa' + i} className="label"
-                                                                x={this.projection(item.geolocation.coordinates)[0] + 8}
-                                                                y={this.projection(item.geolocation.coordinates)[1] + 50}/>
-                                                              <text key={'pat' + i} className="label-text" id={item.id}
-                                                                x={this.projection(item.geolocation.coordinates)[0] + 18}
-                                                                y={this.projection(item.geolocation.coordinates)[1] + 69}>
-                                                                {item.name} </text>
-                                                            </g>
-
-
+                <g className="singleSvg" ref={e => { this.single = e}} id={item.id}
+                  xpoint={this.projection(item.geolocation.coordinates)[0]}
+                  ypoint={this.projection(item.geolocation.coordinates)[1]}
+                  style={{transformOrigin: this.projection(item.geolocation.coordinates)[0] +'px '+ this.projection(item.geolocation.coordinates)[1]+'px '}}
+                  transform={'scale(' + 1/this.state.zoomCoeffk +')'}>
+                  <circle key={'patho' + i}
+                  onMouseEnter={e => {this.bringUp(item, e)}}
+                  fill={convertColors(parseInt(item.anno))}
+                  cx={this.projection(item.geolocation.coordinates)[0]}
+                  cy={this.projection(item.geolocation.coordinates)[1]}
+                  r={convertMasses(parseFloat(item.mass))} className='meteors'/>
+                <line key={'pathos' + i}
+                  x1={this.projection(item.geolocation.coordinates)[0]}
+                  y1={this.projection(item.geolocation.coordinates)[1]}
+                  x2={this.projection(item.geolocation.coordinates)[0]}
+                  y2={this.projection(item.geolocation.coordinates)[1] + 80}
+                  stroke="black" strokeWidth="0.6" className="line"/>
+                <rect key={'pa' + i} className="label"
+                  x={this.projection(item.geolocation.coordinates)[0] + 8}
+                  y={this.projection(item.geolocation.coordinates)[1] + 50}/>
+                <text key={'pat' + i} className="label-text"
+                  x={this.projection(item.geolocation.coordinates)[0] + 18}
+                  y={this.projection(item.geolocation.coordinates)[1] + 69}>
+                  {item.name} </text>
+              </g>
 
             )})
 
@@ -90,10 +117,9 @@ class MapRight extends Component {
 
     return (
 
-
-
-      <div id="map-holder">
+      <div id="map-holder" ref={e => { this.svgBigContainer = e}}>
         <div className="title">ASTEROIDS AMONG US</div>
+
         <svg className="svgContainer"
               ref={e => { this.svgContainer = e}}
               viewBox={'0 0 ' + this.clientWidth + ' ' + this.clientHeight }
@@ -101,12 +127,17 @@ class MapRight extends Component {
           <g ref={e => { this.g = e}}>
           {countries}
             <svg ref={e => { this.svg = e}}>
+              {_.map(this.state.myel, item => <g dangerouslySetInnerHTML={{__html:item.html}}></g>)}
               {meteorites}
+
             </svg>
-          <use id="use" xlinkHref={'#' + this.state.upperSvg} />
+
+
           </g>
 
+
         </svg>
+
       </div>
     )
 

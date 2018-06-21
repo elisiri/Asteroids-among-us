@@ -15,7 +15,7 @@ body {
 .svgContainer {
   height: 100vh;
   width: 100vw;
-
+/* transform-origin: center center; */
 }
 
 .meteors {
@@ -41,11 +41,15 @@ body {
 .meteors:hover + .line {
   stroke-dashoffset: 0;
 }
+use .line {
+  stroke-dashoffset: 0;
+}
 
 /* .singleSvg {
-  position: absolute;
-  z-index: 1;
-}
+  transform-origin: center center;
+} */
+
+/*
 .singleSvg:hover {
   z-index: 99999;
 } */
@@ -68,6 +72,9 @@ body {
 .meteors:hover ~ .label {
   width: 145px;
 }
+use .label {
+  width: 145px;
+}
 .label-text {
   fill: white;
   font-size: 9px;
@@ -80,6 +87,10 @@ body {
   text-transform: uppercase;
 }
 .meteors:hover ~ .label-text {
+  opacity: 1;
+  display: block;
+}
+use .label-text {
   opacity: 1;
   display: block;
 }
