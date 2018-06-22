@@ -12,41 +12,23 @@ class MapRight extends Component {
 
     this.clientHeight = window.document.documentElement.clientHeight
     this.clientWidth = window.document.documentElement.clientWidth
-    this.zoom = zoom().scaleExtent([1, 4]).on("zoom", this.zoomed)
+    this.zoom = zoom().scaleExtent([1, 6]).on("zoom", this.zoomed)
     this.state = {
-     myel: [{html:''}]
+      zoomCoeffk: 1
     }
-    // this.zoom2 = zoom().scaleExtent([-4, 1]).on("zoom", this.deZoomed)
   }
 
   zoomed = () => {
     this.g.setAttribute("transform", event.transform)
-    // select('#use').attr("transform", event.transform)
     this.setState({zoomCoeffk: event.transform.k,
                   zoomCoeffx: event.transform.x,
                   zoomCoeffy: event.transform.y})
     console.log(this.state.zoomCoeffx, this.state.zoomCoeffy)
 
   }
-  // deZoomed = () => {
-  //
-  //   _.forEach(selectAll('.singleSvg'), (array2, index) => {
-  //     _.forEach(array2, (array3, i) => {
-  //       _.forEach(array3, (item, ind)=> {
-  //         var cy = select(item).attr('ypoint')
-  //         var cx = select(item).attr('xpoint')
-  //         select(item).attr("transform", ' translate('+ -cx +', ' + -cy + ') ' + event.transform + ' translate('+cx+', ' + cy + ') ')
-  //       })
-  //
-  //     })
-  //
-  //   })
-  //
-  // }
 
   componentDidMount() {
     select(this.svgContainer).call(this.zoom)
-    // select(this.svgBigContainer).call(this.zoom2)
 
   }
 
@@ -59,11 +41,7 @@ class MapRight extends Component {
   }
 
   bringUp = (item, e) => {
-    if (item) this.setState({upperSvg: item.id})
-    console.log(e.target.parentNode);
-    this.setState({
-     myel: [{html:e.target.parentNode}]
-   })
+    select(e.target.parentNode).raise()
   }
 
   render() {
@@ -85,27 +63,25 @@ class MapRight extends Component {
             if (item.year) item.anno = item.year.toString().substring(0, 4)
             return(
 
-                <g className="singleSvg" ref={e => { this.single = e}} id={item.id}
-                  xpoint={this.projection(item.geolocation.coordinates)[0]}
-                  ypoint={this.projection(item.geolocation.coordinates)[1]}
+                <g className="singleSvg" ref={e => { this.single = e}} id={item.id} key={'patho' + i}
                   style={{transformOrigin: this.projection(item.geolocation.coordinates)[0] +'px '+ this.projection(item.geolocation.coordinates)[1]+'px '}}
                   transform={'scale(' + 1/this.state.zoomCoeffk +')'}>
-                  <circle key={'patho' + i}
+                  <circle
                   onMouseEnter={e => {this.bringUp(item, e)}}
                   fill={convertColors(parseInt(item.anno))}
                   cx={this.projection(item.geolocation.coordinates)[0]}
                   cy={this.projection(item.geolocation.coordinates)[1]}
                   r={convertMasses(parseFloat(item.mass))} className='meteors'/>
-                <line key={'pathos' + i}
+                <line
                   x1={this.projection(item.geolocation.coordinates)[0]}
                   y1={this.projection(item.geolocation.coordinates)[1]}
                   x2={this.projection(item.geolocation.coordinates)[0]}
                   y2={this.projection(item.geolocation.coordinates)[1] + 80}
                   stroke="black" strokeWidth="0.6" className="line"/>
-                <rect key={'pa' + i} className="label"
+                <rect className="label"
                   x={this.projection(item.geolocation.coordinates)[0] + 8}
                   y={this.projection(item.geolocation.coordinates)[1] + 50}/>
-                <text key={'pat' + i} className="label-text"
+                <text className="label-text"
                   x={this.projection(item.geolocation.coordinates)[0] + 18}
                   y={this.projection(item.geolocation.coordinates)[1] + 69}>
                   {item.name} </text>
@@ -127,7 +103,6 @@ class MapRight extends Component {
           <g ref={e => { this.g = e}}>
           {countries}
             <svg ref={e => { this.svg = e}}>
-              {_.map(this.state.myel, item => <g dangerouslySetInnerHTML={{__html:item.html}}></g>)}
               {meteorites}
 
             </svg>
