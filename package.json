@@ -2,6 +2,7 @@
   "name": "gabapp",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/experiments/asteroids-d3",
   "dependencies": {
     "d3": "^5.5.0",
     "jquery": "^3.3.1",
